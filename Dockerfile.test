@@ -21,6 +21,7 @@ RUN pip install --upgrade pip && \
 
 RUN pip list
 
+COPY pytest.ini /app/
 COPY ./app /app/app/
 # RUN pip install .
 

@@ -34,7 +34,6 @@ class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
 
-
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode: dict = data.copy()
     expire: datetime = datetime.utcnow() + (expires_delta or timedelta(minutes=15))

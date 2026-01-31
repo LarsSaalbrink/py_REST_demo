@@ -6,6 +6,15 @@ API documentation is available at http://127.0.0.1:8000/docs#/ when running the 
 
 # Useful commands
 
+## Tests
+
+### Build docker image for Tests
+docker build -t py_rest_demo_test -f Dockerfile.test .
+
+### Run docker image for Tests
+
+docker run --rm py_rest_demo_test
+
 ## Build docker image for dev
 
 docker build -t py_rest_demo -f Dockerfile.dev .

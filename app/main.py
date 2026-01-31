@@ -5,7 +5,6 @@ from fastapi import FastAPI
 
 from database import init_db
 from auth import Token
-from models import Task
 from user_endpoints import create_user, login
 from task_endpoints import Api_Task, list_created_tasks, create_task, update_task, delete_task
 

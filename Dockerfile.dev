@@ -1,21 +1,14 @@
-# --- Use official Python image ---
 FROM python:3.12-slim
 
-# --- Set working directory inside container ---
 WORKDIR /app
 
-# --- Install dependencies ---
 COPY pyproject.toml poetry.lock* /app/
 RUN pip install --upgrade pip && \
     pip install "sqlmodel[sqlite]" fastapi uvicorn python-jose bcrypt python-multipart pycryptodome
 
-# --- Copy the rest of the app (optional, mainly for initial build) ---
-# This can be overwritten by bind mount for dev
 COPY ./app /app
 
-# --- Expose port for FastAPI ---
 EXPOSE 8000
 
-# --- Default command to run app with hot reload ---
-# uvicorn will watch /app for changes
+# Run app with hot reload
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

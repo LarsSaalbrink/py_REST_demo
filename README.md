@@ -52,7 +52,7 @@ curl http://127.0.0.1:8000/tasks \
 
 ## Update task (Requires token)
 
-curl -i -X PUT "http://127.0.0.1:8000/tasks/1" \
+curl -i -X PUT "http://127.0.0.1:8000/tasks/52066650752017374089771338888820989312" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -65,5 +65,5 @@ curl -i -X PUT "http://127.0.0.1:8000/tasks/1" \
 
 ## Delete task (Requires token)
 
-curl -i -X DELETE "http://127.0.0.1:8000/tasks/143576189474197533500373928514628228997" \
+curl -i -X DELETE "http://127.0.0.1:8000/tasks/52066650752017374089771338888820989312" \
   -H "Authorization: Bearer $TOKEN"

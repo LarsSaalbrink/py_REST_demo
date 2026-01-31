@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from typing import Any
 from pydantic import BaseModel
 from Crypto.Cipher import AES
+import hashlib
 
 from models import User
 from database import get_session
@@ -27,8 +28,7 @@ SECRET_KEY = secret_raw
 # To mitigate this, ids encrypted with a symmetrical encryption cipher before exposed to clients,
 # then decrypted when client returns them for subsequent API calls.
 # This way the true values can be masked, without interfering with database efficiency.
-ID_CRYPTO_KEY: bytes = b'\x08\xb1\xba@RP`3S~v\x8a\xa2\xd9\x8b\x1f\x80bO$\x01m\xda\x83\xb2Z\xbc\xd0V\x10\xfdu'
-id_cipher = AES.new(ID_CRYPTO_KEY, AES.MODE_ECB)
+id_cipher = AES.new(hashlib.sha256(SECRET_KEY.encode("utf-8")).digest(), AES.MODE_ECB)
 
 class Token(BaseModel):
     access_token: str

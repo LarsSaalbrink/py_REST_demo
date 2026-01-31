@@ -74,17 +74,22 @@ def update_task(
     # Validate request
     if not task_id:
         raise HTTPException(status_code=400, detail="Task ID is required") # 400: Bad Request
-    task_raw: Task | None = session.exec(select(Task).where(Task.id == task_id)).first()
+    encrypted_id: int = task_id
+    task_raw: Task | None = None
+
+    # Decrypt ID
+    try:
+        decrypted_id_bytes: bytes = id_cipher.decrypt(task_id.to_bytes(16, byteorder='big'))
+        task_id = int.from_bytes(decrypted_id_bytes, byteorder='big')
+        task_raw = session.exec(select(Task).where(Task.id == task_id)).first()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Invalid task ID") # 400: Bad Request
+
     if not task_raw:
         raise HTTPException(status_code=404, detail="Task not found") # 404: Not Found
     task: Task = task_raw
     if task.owner_id != user.id:
         raise HTTPException(status_code=403, detail="Must be owner of task to update") # 403: Forbidden
-
-    # Decrypt ID
-    encrypted_id: int = task_id
-    decrypted_id_bytes: bytes = id_cipher.decrypt(task_id.to_bytes(16, byteorder='big'))
-    task_id = int.from_bytes(decrypted_id_bytes, byteorder='big')
 
     if update_req.title:
         task.title = update_req.title
@@ -106,12 +111,16 @@ def delete_task(
     # Validate request
     if not delete_req.task_id:
         raise HTTPException(status_code=400, detail="Task ID is required") # 400: Bad Request
+    task_raw: Task | None = None
 
     # Decrypt ID
-    decrypted_id_bytes: bytes = id_cipher.decrypt(delete_req.task_id.to_bytes(16, byteorder='big'))
-    delete_req.task_id = int.from_bytes(decrypted_id_bytes, byteorder='big')
+    try:
+        decrypted_id_bytes: bytes = id_cipher.decrypt(delete_req.task_id.to_bytes(16, byteorder='big'))
+        delete_req.task_id = int.from_bytes(decrypted_id_bytes, byteorder='big')
+        task_raw: Task | None = session.exec(select(Task).where(Task.id == delete_req.task_id)).first()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Invalid task ID") # 400: Bad Request
 
-    task_raw: Task | None = session.exec(select(Task).where(Task.id == delete_req.task_id)).first()
     if not task_raw:
         raise HTTPException(status_code=404, detail="Task not found") # 404: Not Found
     task: Task = task_raw

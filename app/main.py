@@ -7,7 +7,7 @@ from database import init_db
 from auth import Token
 from models import Task
 from user_endpoints import create_user, login
-from task_endpoints import list_created_tasks
+from task_endpoints import list_created_tasks, create_task
 
 def on_startup() -> None:
     init_db()
@@ -19,6 +19,7 @@ app.add_event_handler("startup", on_startup)
 app.add_api_route("/register", create_user, methods=["POST"], response_model=None)
 app.add_api_route("/login", login, methods=["POST"], response_model=Token)
 app.add_api_route("/tasks", list_created_tasks, methods=["GET"], response_model=list[Task])
+app.add_api_route("/tasks", create_task, methods=["POST"], response_model=None)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run FastAPI app with optional reload.")

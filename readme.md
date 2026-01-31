@@ -64,9 +64,22 @@ curl -i -X POST http://127.0.0.1:8000/register \
 
 ## Get token (and store it in TOKEN env var)
 
-export TOKEN=$(curl -s -X POST "http://127.0.0.1:8000/token?email=larssaalbrink@gmail.com&password=kaaskop" | jq -r '.access_token')
+export TOKEN=$(curl -s -X POST "http://127.0.0.1:8000/login?email=larssaalbrink@gmail.com&password=kaaskop" | jq -r '.access_token')
 
-## Get users (Requires token)
+## Create task (Requires token)
 
-curl http://127.0.0.1:8000/users \
+curl -i -X POST "http://127.0.0.1:8000/tasks" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+
+    "title": "Eat cheese",
+    "description": "Eat all cheese currently in the fridge",
+    "due_date": "2025-02-21"
+
+  }'
+
+## Get tasks (Requires token)
+
+curl http://127.0.0.1:8000/tasks \
   -H "Authorization: Bearer $TOKEN"

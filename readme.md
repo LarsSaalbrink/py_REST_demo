@@ -57,14 +57,17 @@ curl -i -X POST http://127.0.0.1:8000/register \
   -H "Content-Type: application/json" \
   -d '{
 
-    "email": "larssaalbrink@gmail.com",
+    "username": "larssaalbrink@gmail.com",
     "password": "kaaskop"
 
   }'
 
 ## Get token (and store it in TOKEN env var)
 
-export TOKEN=$(curl -s -X POST "http://127.0.0.1:8000/login?email=larssaalbrink@gmail.com&password=kaaskop" | jq -r '.access_token')
+export TOKEN=$(curl -s -X POST "http://127.0.0.1:8000/login" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=larssaalbrink@gmail.com" \
+  -d "password=kaaskop" | jq -r '.access_token')
 
 ## Create task (Requires token)
 

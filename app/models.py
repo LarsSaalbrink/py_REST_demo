@@ -12,6 +12,6 @@ class Task(SQLModel, table=True):
 
 class User(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
-    email: str
+    username: str
     password_salt: str
     password_hash: str

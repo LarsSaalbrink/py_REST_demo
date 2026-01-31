@@ -7,7 +7,7 @@ WORKDIR /app
 # --- Install dependencies ---
 COPY pyproject.toml poetry.lock* /app/
 RUN pip install --upgrade pip && \
-    pip install "sqlmodel[sqlite]" fastapi uvicorn python-jose bcrypt
+    pip install "sqlmodel[sqlite]" fastapi uvicorn python-jose bcrypt python-multipart
 
 # --- Copy the rest of the app (optional, mainly for initial build) ---
 # This can be overwritten by bind mount for dev

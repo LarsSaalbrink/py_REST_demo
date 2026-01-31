@@ -7,7 +7,7 @@ from database import init_db
 from auth import Token
 from models import Task
 from user_endpoints import create_user, login
-from task_endpoints import list_created_tasks, create_task, delete_task
+from task_endpoints import list_created_tasks, create_task, update_task, delete_task
 
 def on_startup() -> None:
     init_db()
@@ -20,6 +20,7 @@ app.add_api_route("/register", create_user, methods=["POST"], response_model=Non
 app.add_api_route("/login", login, methods=["POST"], response_model=Token)
 app.add_api_route("/tasks", list_created_tasks, methods=["GET"], response_model=list[Task])
 app.add_api_route("/tasks", create_task, methods=["POST"], response_model=None)
+app.add_api_route("/tasks/{task_id}", update_task, methods=["PUT"], response_model=None)
 app.add_api_route("/tasks/{task_id}", delete_task, methods=["DELETE"], response_model=None)
 
 if __name__ == "__main__":

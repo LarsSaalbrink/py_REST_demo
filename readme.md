@@ -84,6 +84,19 @@ curl -i -X POST "http://127.0.0.1:8000/tasks" \
 curl http://127.0.0.1:8000/tasks \
   -H "Authorization: Bearer $TOKEN"
 
+## Update task (Requires token)
+
+curl -i -X PUT "http://127.0.0.1:8000/tasks/1" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+
+    "title": "Drink milk",
+    "description": "Drink absurd amount of milk",
+    "due_date": "2025-03-01"
+
+  }'
+
 ## Delete task (Requires token)
 
 curl -i -X DELETE "http://127.0.0.1:8000/tasks/1" \

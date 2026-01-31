@@ -53,6 +53,36 @@ def create_task(
     session.refresh(task) # Ensure that task object is up to date with DB before returning
     return Response(status_code=201)
 
+class Update_Task_request(BaseModel):
+    title: Optional[str]
+    description: Optional[str]
+    due_date: Optional[datetime]
+def update_task(
+    task_id: int = Path(...),
+    update_req: Update_Task_request = Body(...),
+    user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+) -> Response:
+    # Validate request
+    if not task_id:
+        raise HTTPException(status_code=400, detail="Task ID is required") # 400: Bad Request
+    task_raw: Task | None = session.exec(select(Task).where(Task.id == task_id)).first()
+    if not task_raw:
+        raise HTTPException(status_code=404, detail="Task not found") # 404: Not Found
+    task: Task = task_raw
+    if task.owner_id != user.id:
+        raise HTTPException(status_code=403, detail="Must be owner of task to update") # 403: Forbidden
+
+    if update_req.title:
+        task.title = update_req.title
+    if update_req.description:
+        task.description = update_req.description
+    if update_req.due_date:
+        task.due_date = update_req.due_date
+
+    session.commit()
+    return Response(status_code=200) # 200: OK
+
 class Delete_Task_request(BaseModel):
     task_id: int
 def delete_task(

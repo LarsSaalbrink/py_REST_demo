@@ -1,6 +1,5 @@
 import bcrypt
 
-from typing import Any, Sequence
 from fastapi import Response
 from sqlmodel import Session, select
 from fastapi import Depends, HTTPException, Query

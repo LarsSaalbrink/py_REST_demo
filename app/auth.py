@@ -25,9 +25,6 @@ class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
 
-    def __init__(self, access_token: str):
-        self.access_token: str = access_token
-        self.token_type: str = "bearer"
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode: dict = data.copy()
@@ -35,6 +32,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
+# Validate token
 def get_current_user(
     token: str = Depends(oauth2_scheme),
     session: Session = Depends(get_session),

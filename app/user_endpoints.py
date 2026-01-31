@@ -8,8 +8,8 @@ from datetime import timedelta
 from pydantic import BaseModel
 from sqlmodel.sql._expression_select_cls import SelectOfScalar
 
-from models import User, Token
-from auth import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, get_current_user
+from models import User
+from auth import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, Token
 from database import get_session
 
 MINIMUM_PASSWORD_LENGTH: int = 5

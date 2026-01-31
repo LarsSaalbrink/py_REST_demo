@@ -5,7 +5,7 @@ from fastapi import FastAPI
 
 from database import init_db
 from user_endpoints import create_user, login
-from models import User, Token
+from auth import Token
 
 def on_startup() -> None:
     init_db()

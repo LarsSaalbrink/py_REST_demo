@@ -6,6 +6,7 @@ from sqlmodel import Session
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from typing import Any
+from pydantic import BaseModel
 
 from models import User
 from database import get_session
@@ -19,6 +20,14 @@ secret_raw: str | None = os.getenv("SECRET_KEY")
 if not secret_raw:
     raise RuntimeError("SECRET_KEY not set in environment variables")
 SECRET_KEY = secret_raw
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+    def __init__(self, access_token: str):
+        self.access_token: str = access_token
+        self.token_type: str = "bearer"
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode: dict = data.copy()

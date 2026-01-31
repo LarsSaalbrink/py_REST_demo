@@ -5,7 +5,3 @@ class User(SQLModel, table=True):
     email: str
     password_salt: str
     password_hash: str
-
-class Token(SQLModel):
-    access_token: str
-    token_type: str = "bearer"

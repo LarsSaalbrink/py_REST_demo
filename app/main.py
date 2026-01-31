@@ -4,7 +4,7 @@ import argparse
 from fastapi import FastAPI
 
 from database import init_db
-from user_endpoints import create_user, list_users, login
+from user_endpoints import create_user, login
 from models import User, Token
 
 def on_startup() -> None:
@@ -15,8 +15,7 @@ app = FastAPI()
 app.add_event_handler("startup", on_startup)
 
 app.add_api_route("/register", create_user, methods=["POST"], response_model=None)
-app.add_api_route("/users", list_users, methods=["GET"], response_model=list[User])
-app.add_api_route("/token", login, methods=["POST"], response_model=Token)
+app.add_api_route("/login", login, methods=["POST"], response_model=Token)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run FastAPI app with optional reload.")

@@ -41,7 +41,7 @@ def create_user(user_req: Create_user_request, session: Session = Depends(get_se
     session.add(user)
     session.commit()
     session.refresh(user) # Ensure that user object is up to date with DB before returning
-    return Response(status_code=201)
+    return Response(status_code=201) # 201: Created
 
 class Login_request(BaseModel):
     email: str

@@ -83,3 +83,8 @@ curl -i -X POST "http://127.0.0.1:8000/tasks" \
 
 curl http://127.0.0.1:8000/tasks \
   -H "Authorization: Bearer $TOKEN"
+
+## Delete task (Requires token)
+
+curl -i -X DELETE "http://127.0.0.1:8000/tasks/1" \
+  -H "Authorization: Bearer $TOKEN"

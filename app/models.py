@@ -2,8 +2,9 @@ from sqlmodel import SQLModel, Field
 
 class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    name: str
     email: str
+    password_salt: str
+    password_hash: str
 
 class Token(SQLModel):
     access_token: str

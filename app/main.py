@@ -1,6 +1,8 @@
-from fastapi import FastAPI
 import uvicorn
 import argparse
+
+from fastapi import FastAPI
+
 from database import init_db
 from endpoints import create_user, list_users, login
 from models import User, Token
@@ -12,7 +14,7 @@ app = FastAPI()
 
 app.add_event_handler("startup", on_startup)
 
-app.add_api_route("/users", create_user, methods=["POST"], response_model=User)
+app.add_api_route("/register", create_user, methods=["POST"], response_model=None)
 app.add_api_route("/users", list_users, methods=["GET"], response_model=list[User])
 app.add_api_route("/token", login, methods=["POST"], response_model=Token)
 

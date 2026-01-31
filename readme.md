@@ -53,12 +53,12 @@ docker run --rm -p 8000:8000 -v $(pwd)/app:/app -e SECRET_KEY=gouda_kaas qpurpos
 
 ## Create user
 
-curl -X POST http://127.0.0.1:8000/users \
+curl -i -X POST http://127.0.0.1:8000/register \
   -H "Content-Type: application/json" \
   -d '{
 
-    "name": "Lars",
-    "email": "larssaalbrink@gmail.com"
+    "email": "larssaalbrink@gmail.com",
+    "password": "kaaskop"
 
   }'
 

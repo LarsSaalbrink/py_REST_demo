@@ -64,7 +64,7 @@ curl -i -X POST http://127.0.0.1:8000/register \
 
 ## Get token (and store it in TOKEN env var)
 
-export TOKEN=$(curl -s -X POST "http://127.0.0.1:8000/token?email=larssaalbrink@gmail.com" | jq -r '.access_token')
+export TOKEN=$(curl -s -X POST "http://127.0.0.1:8000/token?email=larssaalbrink@gmail.com&password=kaaskop" | jq -r '.access_token')
 
 ## Get users (Requires token)
 

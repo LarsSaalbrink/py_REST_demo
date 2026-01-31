@@ -24,12 +24,16 @@ def list_created_tasks(
         select(Task).where(Task.owner_id == user.id)
     ).all()
 
-    # Encrypt IDs
+    api_tasks: list[Api_Task] = []
     for task in tasks:
-        id_bytes = task.id.to_bytes(16, byteorder='big')
-        task.id = int.from_bytes(id_cipher.encrypt(id_bytes), byteorder='big')
+        id_bytes: bytes = task.id.to_bytes(16, byteorder='big')
+        encrypted_id: int = int.from_bytes(id_cipher.encrypt(id_bytes), byteorder='big')
 
-    return [Api_Task.model_validate(task) for task in tasks]
+        api_task: Api_Task = Api_Task.model_validate(task)
+        api_task.id = encrypted_id
+        api_tasks.append(api_task)
+
+    return api_tasks
 
 class Create_Task_request(BaseModel):
     title: str

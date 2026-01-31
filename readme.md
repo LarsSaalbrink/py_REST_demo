@@ -41,6 +41,10 @@ REST API demo project written in Python for Qpurpose
 - Framework: No specific requirement
 - Database: SQLite or Postgres
 - Auth: JWT-based
+# Docs
+
+API documentation is available at http://127.0.0.1:8000/docs#/ when running the app locally.
+
 # Useful commands
 
 ## Build docker image for dev

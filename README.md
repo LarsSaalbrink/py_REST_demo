@@ -106,5 +106,5 @@ curl -i -X PUT "http://127.0.0.1:8000/tasks/1" \
 
 ## Delete task (Requires token)
 
-curl -i -X DELETE "http://127.0.0.1:8000/tasks/1" \
+curl -i -X DELETE "http://127.0.0.1:8000/tasks/143576189474197533500373928514628228997" \
   -H "Authorization: Bearer $TOKEN"

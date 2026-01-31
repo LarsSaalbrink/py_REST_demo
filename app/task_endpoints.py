@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from models import Task
 from models import User
-from auth import get_current_user
+from auth import get_current_user, id_cipher
 from database import get_session
 
 class Api_Task(SQLModel):
@@ -24,6 +24,11 @@ def list_created_tasks(
         select(Task).where(Task.owner_id == user.id)
     ).all()
 
+    # Encrypt IDs
+    for task in tasks:
+        id_bytes = task.id.to_bytes(16, byteorder='big')
+        task.id = int.from_bytes(id_cipher.encrypt(id_bytes), byteorder='big')
+
     return [Api_Task.model_validate(task) for task in tasks]
 
 class Create_Task_request(BaseModel):
@@ -34,7 +39,7 @@ def create_task(
     user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
     task_req: Create_Task_request = Body(...),
-) -> Response:
+) -> int:
     # Validate request
     if not task_req.title:
         raise HTTPException(status_code=400, detail="Title is required") # 400: Bad Request
@@ -51,7 +56,10 @@ def create_task(
     session.add(task)
     session.commit()
     session.refresh(task) # Ensure that task object is up to date with DB before returning
-    return Response(status_code=201)
+
+    # Return encrypted ID
+    id_bytes: bytes = task.id.to_bytes(16, byteorder='big')
+    return int.from_bytes(id_cipher.encrypt(id_bytes), byteorder='big')
 
 class Update_Task_request(BaseModel):
     title: Optional[str]
@@ -62,7 +70,7 @@ def update_task(
     update_req: Update_Task_request = Body(...),
     user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
-) -> Response:
+) -> int:
     # Validate request
     if not task_id:
         raise HTTPException(status_code=400, detail="Task ID is required") # 400: Bad Request
@@ -73,6 +81,11 @@ def update_task(
     if task.owner_id != user.id:
         raise HTTPException(status_code=403, detail="Must be owner of task to update") # 403: Forbidden
 
+    # Decrypt ID
+    encrypted_id: int = task_id
+    decrypted_id_bytes: bytes = id_cipher.decrypt(task_id.to_bytes(16, byteorder='big'))
+    task_id = int.from_bytes(decrypted_id_bytes, byteorder='big')
+
     if update_req.title:
         task.title = update_req.title
     if update_req.description:
@@ -81,7 +94,7 @@ def update_task(
         task.due_date = update_req.due_date
 
     session.commit()
-    return Response(status_code=200) # 200: OK
+    return encrypted_id
 
 class Delete_Task_request(BaseModel):
     task_id: int
@@ -93,6 +106,11 @@ def delete_task(
     # Validate request
     if not delete_req.task_id:
         raise HTTPException(status_code=400, detail="Task ID is required") # 400: Bad Request
+
+    # Decrypt ID
+    decrypted_id_bytes: bytes = id_cipher.decrypt(delete_req.task_id.to_bytes(16, byteorder='big'))
+    delete_req.task_id = int.from_bytes(decrypted_id_bytes, byteorder='big')
+
     task_raw: Task | None = session.exec(select(Task).where(Task.id == delete_req.task_id)).first()
     if not task_raw:
         raise HTTPException(status_code=404, detail="Task not found") # 404: Not Found

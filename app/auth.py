@@ -7,6 +7,7 @@ from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from typing import Any
 from pydantic import BaseModel
+from Crypto.Cipher import AES
 
 from models import User
 from database import get_session
@@ -20,6 +21,14 @@ secret_raw: str | None = os.getenv("SECRET_KEY")
 if not secret_raw:
     raise RuntimeError("SECRET_KEY not set in environment variables")
 SECRET_KEY = secret_raw
+
+# Exposing ID's through API is a design requirement.
+# However, Sqlite ids are simple and predictable, which is a cyber security risk. (Leaks information)
+# To mitigate this, ids encrypted with a symmetrical encryption cipher before exposed to clients,
+# then decrypted when client returns them for subsequent API calls.
+# This way the true values can be masked, without interfering with database efficiency.
+ID_CRYPTO_KEY: bytes = b'\x08\xb1\xba@RP`3S~v\x8a\xa2\xd9\x8b\x1f\x80bO$\x01m\xda\x83\xb2Z\xbc\xd0V\x10\xfdu'
+id_cipher = AES.new(ID_CRYPTO_KEY, AES.MODE_ECB)
 
 class Token(BaseModel):
     access_token: str

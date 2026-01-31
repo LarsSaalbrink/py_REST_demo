@@ -4,7 +4,7 @@ import argparse
 from fastapi import FastAPI
 
 from database import init_db
-from endpoints import create_user, list_users, login
+from user_endpoints import create_user, list_users, login
 from models import User, Token
 
 def on_startup() -> None:

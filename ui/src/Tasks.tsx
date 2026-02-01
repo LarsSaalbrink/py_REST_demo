@@ -54,6 +54,41 @@ export function Tasks(props: TasksProps) {
         fetchTasks();
     }, []);
 
+    const handleAddTask = async () => {
+        const token = sessionStorage.getItem("access_token");
+        if (!token) {
+            alert("Session expired");
+            props.logout();
+            return;
+        }
+
+        try {
+            const response = await fetch(`${serverUrl}/tasks`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    title: "New Task",
+                    description: "...",
+                    due_date:
+                        new Date().toISOString().slice(0, 10) + "T00:00:00",
+                    is_completed: false,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to create task");
+            }
+
+            await fetchTasks();
+        } catch (err) {
+            console.error(err);
+            alert("Could not add task: " + err);
+        }
+    };
+
     const handleEdit = (task: Task) => {
         setEditingTaskId(task.id);
         setEditValues({
@@ -311,6 +346,21 @@ export function Tasks(props: TasksProps) {
                         })}
                     </tbody>
                 </table>
+                <div
+                    style={{
+                        textAlign: "center",
+                        cursor: "pointer",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        width: "100%",
+                        marginTop: "20px",
+                        fontSize: "1.5em",
+                    }}
+                    onClick={handleAddTask}
+                >
+                    ➕
+                </div>
             </div>
         </>
     );

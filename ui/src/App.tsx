@@ -3,6 +3,26 @@ import "./App.css";
 function App() {
     return (
         <>
+            <div
+                style={{
+                    position: "absolute",
+                    top: "20px",
+                    right: "20px",
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "40px",
+                    backgroundColor: "#908164",
+                    fontSize: "50px",
+                    textAlign: "center",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                }}
+                title="Create free account"
+            >
+                ✚
+            </div>
             <h1>Sign in</h1>
             <div className="card">
                 <div

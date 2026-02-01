@@ -306,8 +306,6 @@ export function Tasks(props: TasksProps) {
                                         style={{
                                             textAlign: "center",
                                             cursor: "pointer",
-                                            display: "flex",
-                                            flexDirection: "row",
                                         }}
                                     >
                                         {isEditing ? (

@@ -16,13 +16,11 @@ type TasksProps = {
 
 export function Tasks(props: TasksProps) {
     const [tasks, setTasks] = useState<Task[]>([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
     const [editValues, setEditValues] = useState<Partial<Task>>({});
 
     const fetchTasks = async () => {
-        setLoading(true);
         setError(null);
 
         try {
@@ -45,8 +43,6 @@ export function Tasks(props: TasksProps) {
         } catch (err) {
             console.error(err);
             setError("Could not load tasks");
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -161,10 +157,6 @@ export function Tasks(props: TasksProps) {
             alert("Could not delete task: " + err);
         }
     };
-
-    if (loading) {
-        return <h1>Loading tasks…</h1>;
-    }
 
     if (error) {
         return <h1>{error}</h1>;

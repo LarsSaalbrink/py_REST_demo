@@ -8,6 +8,8 @@ RUN pip install --upgrade pip && \
 
 COPY ./app /app
 
+ENV DEV_MODE=1
+
 EXPOSE 8000
 
 # Run app with hot reload

@@ -69,6 +69,7 @@ class Update_Task_request(BaseModel):
     title: Optional[str]
     description: Optional[str]
     due_date: Optional[datetime]
+    is_completed: Optional[bool]
 def update_task(
     task_id: int = Path(...),
     update_req: Update_Task_request = Body(...),
@@ -101,6 +102,8 @@ def update_task(
         task.description = update_req.description
     if update_req.due_date:
         task.due_date = update_req.due_date
+    if update_req.is_completed:
+        task.is_completed = update_req.is_completed
 
     session.commit()
     return encrypted_id

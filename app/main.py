@@ -1,7 +1,7 @@
-import uvicorn
-import argparse
+import os
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from database import init_db
 from auth import Token
@@ -10,6 +10,15 @@ from task_endpoints import Api_Task, list_created_tasks, create_task, update_tas
 
 def on_startup() -> None:
     init_db()
+
+def enable_dev_cors(app: FastAPI) -> None:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost:5173"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 app = FastAPI()
 
@@ -24,11 +33,5 @@ app.add_api_route("/tasks", create_task, methods=["POST"], response_model=int)  
 app.add_api_route("/tasks/{task_id}", update_task, methods=["PUT"], response_model=int) # Return ID
 app.add_api_route("/tasks/{task_id}", delete_task, methods=["DELETE"], response_model=None)
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run FastAPI app with optional hot-reload.")
-    parser.add_argument("--host", default="127.0.0.1", help="Host to bind")
-    parser.add_argument("--port", type=int, default=8000, help="Port to bind")
-    parser.add_argument("--reload", action="store_true", help="Enable hot reload")
-    args: argparse.Namespace = parser.parse_args()
-
-    uvicorn.run("main:app", host=args.host, port=args.port, reload=args.reload)
+if os.getenv("DEV_MODE") == "1":
+    enable_dev_cors(app)

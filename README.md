@@ -1,10 +1,64 @@
 REST API demo project written in Python
 
-# Docs
+# Public Access
 
-API documentation is available at http://127.0.0.1:8000/docs#/ when running the app locally.
+Server is publicly hosted
 
+## Webpage URL
+
+https://larssaalbrink.dk/ui/
+
+## API Docs URL
+
+https://larssaalbrink.dk/docs/
+
+# Design Decisions
+
+## Tech Stack
+
+### Backend (Python)
+
+- SQLModel (SQLAlchemy + Pydantic)
+- FastAPI
+- SQLite
+- uvicorn
+
+### Frontend (Typescript)
+
+- React
+- Vite
+
+### Deployment
+
+- Docker
+- Nginx
+- Google Cloud Platform (GCP)
+
+## Considerations
+
+- Added a web-frontend and deployed solution to a production environment in addition to the set requirements.
+- FastAPI docs page is enabled. Usually docs are not exposed in production, but as it is explicitly stated as a deliverable by requirements, docs are never disabled for this project.
+- uvicorn server for hot-reloading and great async support.
+- Nginx used for proxying requests to the FastAPI server. This makes https connections & DDOS mitigation easy, improving security.
+- Efforts have been made to prevent information leakage in ways JWT alone does not prevent. (ID obfuscation)
+- Server datatypes and database schema are tightly coupled by a single source of truth. This is fine for this usecase which does not require interoperability between multiple DB schemas.
+- Production deployed of the project is done as a Docker image running in a single VM on GCP. Choice dictated by desire to keep costs for cloud compute + persistent database as low as possible.
+Sqlite was chosen with same reasoning, Postgres would have been slightly more expensive.
+- Vite bundler is used to produce a single-file bundle for the frontend. This makes hosting the webpage using nginx very simple.
 # Development
+
+## Requirements
+
+The following must be installed on your system for development:
+- Docker
+- NodeJS + npm
+- curl
+
+A python3 virtual environment with the dependencies listed in pyproject.toml is recommended for syntax-highlighting.
+
+## Docs
+
+API documentation is available at http://127.0.0.1:8000/docs when running the app locally.
 
 ## Tests
 
@@ -25,6 +79,11 @@ docker build -t py_rest_demo -f Dockerfile.dev .
 ### Run docker image for dev
 
 docker run --rm -p 8000:8000 -v $(pwd)/app:/app -e SECRET_KEY=gouda_kaas py_rest_demo
+
+### Run frontend dev server
+
+cd ui
+npm run dev
 
 ## Dev curl commands
 

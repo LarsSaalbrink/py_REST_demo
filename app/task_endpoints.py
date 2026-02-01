@@ -66,10 +66,10 @@ def create_task(
     return int.from_bytes(id_cipher.encrypt(id_bytes), byteorder='big')
 
 class Update_Task_request(BaseModel):
-    title: Optional[str]
-    description: Optional[str]
-    due_date: Optional[datetime]
-    is_completed: Optional[bool]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    due_date: Optional[datetime] = None
+    is_completed: Optional[bool] = None
 def update_task(
     task_id: int = Path(...),
     update_req: Update_Task_request = Body(...),

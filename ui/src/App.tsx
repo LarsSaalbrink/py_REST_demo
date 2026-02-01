@@ -4,7 +4,7 @@ import { Login } from "./Login";
 import { Tasks } from "./Tasks";
 import { CreateAccount } from "./CreateAccount";
 
-export const serverUrl = "http://127.0.0.1:8000";
+export const serverUrl = "https://larssaalbrink.dk";
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);

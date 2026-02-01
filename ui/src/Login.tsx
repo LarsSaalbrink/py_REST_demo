@@ -11,7 +11,9 @@ export function Login(props: LoginProps) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+        null,
+    );
 
     const scheduleRefresh = (user: string, pass: string) => {
         refreshTimeoutRef.current = setTimeout(

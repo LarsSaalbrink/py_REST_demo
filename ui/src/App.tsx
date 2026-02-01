@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import { Login } from "./Login";
+import { Tasks } from "./Tasks";
 
 export const serverUrl = "http://127.0.0.1:8000";
 
@@ -18,7 +19,7 @@ function App() {
     };
 
     if (isLoggedIn) {
-        // return <Tasks />;
+        return <Tasks />;
     } else {
         return <Login login={login} />;
     }

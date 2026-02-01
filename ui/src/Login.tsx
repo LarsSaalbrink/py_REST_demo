@@ -10,8 +10,16 @@ export function Login(props: LoginProps) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    // Keep reference to the refresh timer
     const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    const scheduleRefresh = (user: string, pass: string) => {
+        refreshTimeoutRef.current = setTimeout(
+            async () => {
+                await login(user, pass);
+            },
+            15 * 60 * 1000,
+        );
+    };
 
     const login = async (user: string, pass: string) => {
         try {
@@ -27,25 +35,22 @@ export function Login(props: LoginProps) {
                 },
                 body,
             });
-            if (!response.ok) {
-                // TODO: Visualise this
-                throw new Error("Login failed");
-            }
 
-            // Queue token refresh after 15 minutes
+            if (!response.ok) throw new Error("Login failed");
+
+            const data = await response.json();
+            props.login(data.access_token);
+
             if (refreshTimeoutRef.current) {
                 clearTimeout(refreshTimeoutRef.current);
             }
-            refreshTimeoutRef.current = setTimeout(
-                () => {
-                    login(user, pass);
-                },
-                15 * 60 * 1000,
-            );
-            const data = await response.json();
-            props.login(data.access_token);
+            // Eternally log in again every 15 minutes
+            // Ideally, server would have API for refreshing tokens,
+            // but this demo does not have such an api currently.
+            scheduleRefresh(user, pass);
         } catch (err) {
             console.error(err);
+            scheduleRefresh(user, pass);
         }
     };
 

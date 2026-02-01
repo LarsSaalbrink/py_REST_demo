@@ -164,6 +164,27 @@ export function Tasks(props: TasksProps) {
 
     return (
         <>
+            <div
+                style={{
+                    position: "absolute",
+                    top: "20px",
+                    right: "20px",
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "40px",
+                    backgroundColor: "#908164",
+                    fontSize: "50px",
+                    textAlign: "center",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                }}
+                title="Log out"
+                onClick={props.logout}
+            >
+                ↩
+            </div>
             <h1>Your tasks</h1>
             <div
                 style={{

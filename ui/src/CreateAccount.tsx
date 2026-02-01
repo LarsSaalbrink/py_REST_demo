@@ -2,12 +2,12 @@ import { useRef, useState } from "react";
 import "./App.css";
 import { serverUrl } from "./App";
 
-type LoginProps = {
+type CreateAccountProps = {
     login: (token: string) => void;
-    createAccount: () => void;
+    back: () => void;
 };
 
-export function Login(props: LoginProps) {
+export function CreateAccount(props: CreateAccountProps) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
@@ -55,15 +55,29 @@ export function Login(props: LoginProps) {
         }
     };
 
-    const handleContinue = () => {
-        login(username, password);
-    };
+    const handleContinue = async () => {
+        try {
+            const response = await fetch(serverUrl + "/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username, password }),
+            });
 
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            handleContinue();
+            if (!response.ok) {
+                const text = await response.text();
+                alert("Registration failed: " + text);
+                return;
+            }
+
+            // Registration succeeded, proceed to login
+            await login(username, password);
+        } catch (err) {
+            console.error(err);
+            alert("An error occurred during registration.");
         }
-    });
+    };
 
     return (
         <>
@@ -83,12 +97,12 @@ export function Login(props: LoginProps) {
                     justifyContent: "center",
                     cursor: "pointer",
                 }}
-                title="Create free account"
-                onClick={props.createAccount}
+                title="Back"
+                onClick={props.back}
             >
-                ✚
+                ↩
             </div>
-            <h1>Sign in</h1>
+            <h1>Create account</h1>
             <div className="card">
                 <div
                     style={{

@@ -1,6 +1,56 @@
+import { useRef, useState } from "react";
 import "./App.css";
 
+const serverUrl = "http://127.0.0.1:8000";
+
 function App() {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    // Keep reference to the refresh timer
+    const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    const login = async (user: string, pass: string) => {
+        try {
+            const body = new URLSearchParams({
+                username: user,
+                password: pass,
+            });
+
+            const response = await fetch(serverUrl + "/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body,
+            });
+            if (!response.ok) {
+                // TODO: Visualise this
+                throw new Error("Login failed");
+            }
+
+            const data = await response.json();
+            sessionStorage.setItem("access_token", data.access_token);
+
+            // Queue token refresh after 15 minutes
+            if (refreshTimeoutRef.current) {
+                clearTimeout(refreshTimeoutRef.current);
+            }
+            refreshTimeoutRef.current = setTimeout(
+                () => {
+                    login(user, pass);
+                },
+                15 * 60 * 1000,
+            );
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleContinue = () => {
+        login(username, password);
+    };
+
     return (
         <>
             <div
@@ -39,17 +89,19 @@ function App() {
                         className="loginInput"
                         type="text"
                         placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                     />
                     <input
                         className="loginInput"
                         type="password"
                         placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-                <button
-                    className="loginButton"
-                    onClick={() => setCount((count) => count + 1)}
-                >
+
+                <button className="loginButton" onClick={handleContinue}>
                     Continue
                 </button>
             </div>

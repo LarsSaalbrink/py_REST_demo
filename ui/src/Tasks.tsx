@@ -10,7 +10,11 @@ type Task = {
     is_completed: boolean;
 };
 
-export function Tasks() {
+type TasksProps = {
+    logout: () => void;
+};
+
+export function Tasks(props: TasksProps) {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -30,7 +34,14 @@ export function Tasks() {
                     throw new Error("Failed to fetch tasks");
                 }
 
-                const data = await response.json();
+                const text = await response.text();
+                // Convert huge numbers to strings
+                const safeText = text.replace(
+                    /"id":\s*(\d{15,})/g,
+                    '"id":"$1"',
+                );
+                const data = JSON.parse(safeText);
+
                 setTasks(data);
             } catch (err) {
                 console.error(err);
@@ -42,6 +53,41 @@ export function Tasks() {
 
         fetchTasks();
     }, []);
+
+    const handleEdit = (taskId: string) => {
+        console.log("Edit task", taskId);
+        // TODO
+    };
+
+    const handleDelete = async (taskId: string) => {
+        const token = sessionStorage.getItem("access_token");
+
+        if (!token) {
+            alert("Session expired");
+            props.logout();
+            return;
+        }
+
+        try {
+            const response = await fetch(`${serverUrl}/tasks/${taskId}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (!response.ok) {
+                throw new Error("Failed to delete task");
+            }
+
+            // Remove task from UI
+            setTasks((prevTasks) =>
+                prevTasks.filter((task) => task.id !== taskId),
+            );
+        } catch (err) {
+            console.error(err);
+            alert("Could not delete task: " + err);
+        }
+    };
 
     if (loading) {
         return <h1>Loading tasks…</h1>;
@@ -76,6 +122,7 @@ export function Tasks() {
                             <th>Description</th>
                             <th>Due date</th>
                             <th>Done</th>
+                            <th />
                         </tr>
                     </thead>
                     <tbody>
@@ -90,6 +137,24 @@ export function Tasks() {
                                 </td>
                                 <td style={{ textAlign: "center" }}>
                                     {task.is_completed ? "✔" : "✗"}
+                                </td>
+                                <td
+                                    style={{
+                                        textAlign: "center",
+                                        cursor: "pointer",
+                                        display: "flex",
+                                        flexDirection: "row",
+                                    }}
+                                >
+                                    <span
+                                        style={{ marginRight: "10px" }}
+                                        onClick={() => handleEdit(task.id)}
+                                    >
+                                        ✏️
+                                    </span>
+                                    <span onClick={() => handleDelete(task.id)}>
+                                        🗑️
+                                    </span>
                                 </td>
                             </tr>
                         ))}
